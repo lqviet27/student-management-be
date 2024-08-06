@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import vn.bt.spring.qlsv_be.entity.StudentDetail;
 
+import java.util.List;
+
 
 @Repository
 public class StudentDetailDAOImpl implements StudentDetailDAO{
@@ -15,7 +17,6 @@ public class StudentDetailDAOImpl implements StudentDetailDAO{
         this.entityManager = entityManager;
     }
 
-
     @Override
     @Transactional
     public void save(StudentDetail studentDetail) {
@@ -23,7 +24,6 @@ public class StudentDetailDAOImpl implements StudentDetailDAO{
     }
 
     @Override
-    @Transactional
     public StudentDetail findStudentDetailById(int id) {
         return entityManager.find(StudentDetail.class, id);
     }
@@ -40,5 +40,11 @@ public class StudentDetailDAOImpl implements StudentDetailDAO{
     public void deleteStudentDetailById(int id) {
         StudentDetail studentDetail = findStudentDetailById(id);
         entityManager.remove(studentDetail);
+    }
+
+    @Override
+    public List<StudentDetail> getAllStudentDetail() {
+        String spql = "select s from StudentDetail s";
+        return entityManager.createQuery("from StudentDetail", StudentDetail.class).getResultList();
     }
 }

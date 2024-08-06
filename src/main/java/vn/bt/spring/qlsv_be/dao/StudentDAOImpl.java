@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import vn.bt.spring.qlsv_be.entity.Student;
 
+import java.util.List;
+
 
 @Repository
 public class StudentDAOImpl implements StudentDAO{
@@ -20,7 +22,6 @@ public class StudentDAOImpl implements StudentDAO{
     }
 
     @Override
-    @Transactional
     public Student findStudentById(int id) {
         return entityManager.find(Student.class, id);
     }
@@ -37,5 +38,11 @@ public class StudentDAOImpl implements StudentDAO{
     public void deleteStudentById(int id) {
         Student student = findStudentById(id);
         entityManager.remove(student);
+    }
+
+    @Override
+    public List<Student> getAllStudent() {
+        String spql = "select s from Student s";
+        return entityManager.createQuery("from Student", Student.class).getResultList();
     }
 }
