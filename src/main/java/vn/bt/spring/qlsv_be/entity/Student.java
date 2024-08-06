@@ -2,7 +2,7 @@ package vn.bt.spring.qlsv_be.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "student")
+@Table(name = "students")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,5 +66,16 @@ public class Student {
         this.ten = ten;
         this.email = email;
         this.studentDetail = studentDetail;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", hoDem='" + hoDem + '\'' +
+                ", ten='" + ten + '\'' +
+                ", email='" + email + '\'' +
+                ", studentDetail=" + studentDetail +
+                '}';
     }
 }

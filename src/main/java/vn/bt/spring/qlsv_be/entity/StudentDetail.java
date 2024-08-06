@@ -6,7 +6,7 @@ import java.sql.Blob;
 import java.sql.Date;
 
 @Entity
-@Table(name = "student_detail")
+@Table(name = "student_details")
 public class StudentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,5 +92,18 @@ public class StudentDetail {
         this.address = address;
         this.facebook = facebook;
         this.avatar = avatar;
+    }
+
+    @Override
+    public String toString() {
+        return "StudentDetail{" +
+                "id=" + id +
+                ", gender=" + gender +
+                ", dateOfBirth=" + dateOfBirth +
+                ", phoneNum='" + phoneNum + '\'' +
+                ", address='" + address + '\'' +
+                ", facebook='" + facebook + '\'' +
+                ", avatar=" + avatar +
+                '}';
     }
 }
