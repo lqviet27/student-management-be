@@ -1,4 +1,11 @@
 package vn.bt.spring.qlsv_be.dao;
 
+import vn.bt.spring.qlsv_be.entity.Student;
+
 public interface StudentDAO {
+    public void save(Student student);
+    public Student findStudentById(int id);
+    public void update(Student student);
+    public void deleteStudentById(int id);
 }
+
