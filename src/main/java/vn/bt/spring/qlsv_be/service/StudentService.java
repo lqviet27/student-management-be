@@ -10,7 +10,7 @@ import java.util.List;
 public interface StudentService {
     public List<Student> getAllStudent();
     public Student getStudentById(int id);
-    public void addStudent(Student student, MultipartFile file) throws IOException;
+    public void addStudent(Student student, MultipartFile file) throws Exception;
     public void updateStudent(Student student);
     public void deleteStudentById(int id);
 

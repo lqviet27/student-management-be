@@ -12,7 +12,7 @@ public class Student {
     private String hoDem;
     @Column(name = "ten", length = 256)
     private String ten;
-    @Column(name = "email", length = 256)
+    @Column(name = "email", length = 256,unique = true)
     private String email;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_detail_id")

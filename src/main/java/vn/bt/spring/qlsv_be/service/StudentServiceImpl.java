@@ -2,6 +2,7 @@ package vn.bt.spring.qlsv_be.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.bt.spring.qlsv_be.dao.StudentDAOImpl;
@@ -34,9 +35,17 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     @Transactional
-    public void addStudent(Student student, MultipartFile file) throws IOException {
-        student.getStudentDetail().setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
-        studentDAO.save(student);
+    public void addStudent(Student student, MultipartFile file) throws DataIntegrityViolationException,IOException {
+        try{
+            if(file == null){
+                student.getStudentDetail().setAvatar("");
+            }else{
+                student.getStudentDetail().setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
+            }
+            studentDAO.save(student);
+        }catch (DataIntegrityViolationException | IOException e){
+            throw e;
+        }
     }
 
     @Override
