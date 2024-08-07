@@ -1,14 +1,16 @@
 package vn.bt.spring.qlsv_be.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import vn.bt.spring.qlsv_be.entity.Student;
 import vn.bt.spring.qlsv_be.entity.StudentDetail;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface StudentService {
     public List<Student> getAllStudent();
     public Student getStudentById(int id);
-    public void addStudent(Student student);
+    public void addStudent(Student student, MultipartFile file) throws IOException;
     public void updateStudent(Student student);
     public void deleteStudentById(int id);
 

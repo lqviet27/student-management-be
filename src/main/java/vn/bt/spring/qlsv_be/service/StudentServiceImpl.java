@@ -3,11 +3,14 @@ package vn.bt.spring.qlsv_be.service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vn.bt.spring.qlsv_be.dao.StudentDAOImpl;
 import vn.bt.spring.qlsv_be.dao.StudentDetailDAOImpl;
 import vn.bt.spring.qlsv_be.entity.Student;
 import vn.bt.spring.qlsv_be.entity.StudentDetail;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -31,7 +34,8 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     @Transactional
-    public void addStudent(Student student) {
+    public void addStudent(Student student, MultipartFile file) throws IOException {
+        student.getStudentDetail().setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
         studentDAO.save(student);
     }
 

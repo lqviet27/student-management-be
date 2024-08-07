@@ -23,8 +23,8 @@ public class StudentDetail {
     @Column(name = "facebook", length = 256)
     private String facebook;
     @Lob
-    @Column(name = "avatar")
-    private Blob avatar;
+    @Column(name = "avatar", columnDefinition = "MEDIUMBLOB")
+    private String avatar;
 
     public int getId() {
         return id;
@@ -74,18 +74,18 @@ public class StudentDetail {
         this.facebook = facebook;
     }
 
-    public Blob getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(Blob avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 
     public StudentDetail() {
     }
 
-    public StudentDetail(boolean gender, Date dateOfBirth, String phoneNum, String address, String facebook, Blob avatar) {
+    public StudentDetail(boolean gender, Date dateOfBirth, String phoneNum, String address, String facebook, String avatar) {
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.phoneNum = phoneNum;
