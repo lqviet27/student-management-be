@@ -1,5 +1,6 @@
 package vn.bt.spring.qlsv_be.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -50,8 +51,38 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     @Transactional
-    public void updateStudent(Student student) {
-        studentDAO.update(student);
+    public Student updateStudent(Student student, MultipartFile file) throws DataIntegrityViolationException,IOException {
+//        studentDAO.update(student);
+        try {
+            // Lấy student hiện tại từ database
+            Student existingStudent = studentDAO.findStudentById(student.getId());
+
+            if (existingStudent != null) {
+                // Cập nhật các trường thông tin sinh viên
+                int idDetailExits = existingStudent.getStudentDetail().getId();
+                existingStudent.setHoDem(student.getHoDem());
+                existingStudent.setTen(student.getTen());
+                existingStudent.setEmail(student.getEmail());
+                // Các trường khác cần cập nhật...
+
+                // Xử lý avatar
+                if (file != null && !file.isEmpty()) {
+                    existingStudent.getStudentDetail().setAvatar(Base64.getEncoder().encodeToString(file.getBytes()));
+                } else {
+                    // Giữ nguyên avatar cũ nếu không có file mới được tải lên
+                    existingStudent.getStudentDetail().setAvatar(existingStudent.getStudentDetail().getAvatar());
+                }
+
+                // Cập nhật lại thông tin trong database
+                studentDAO.update(existingStudent);
+                deleteStudentDetailById(idDetailExits);
+                return existingStudent;
+            } else {
+                throw new EntityNotFoundException("Student not found with ID: " + student.getId());
+            }
+        } catch (DataIntegrityViolationException | IOException e) {
+            throw e;
+        }
     }
 
     @Override

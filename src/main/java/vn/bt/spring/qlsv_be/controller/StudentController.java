@@ -42,7 +42,7 @@ public class StudentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ApiResponse<Student>> addStudent(@ModelAttribute  Student student, @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)  {
+    public ResponseEntity<ApiResponse<Student>> addStudent(@ModelAttribute  Student student, @RequestParam(value = "imageFile", required = false) MultipartFile imageFile)  {//requestbody Student khong dung dc
         student.setId(0);
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -64,29 +64,30 @@ public class StudentController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable int id, @RequestBody Student student){
-        Student exits = studentService.getStudentById(id);
+    public ResponseEntity<ApiResponse<Student>> updateStudent(@PathVariable int id, @ModelAttribute  Student student, @RequestParam(value = "imageFile", required = false) MultipartFile imageFile){//requestbody Student khong dung dc
+            try{
+                Student updatedStudent = studentService.updateStudent(student,imageFile);
+                ApiResponse<Student> response = new ApiResponse<>(0, "Update Student Success", updatedStudent);
+                return ResponseEntity.ok(response);
+            } catch (DataIntegrityViolationException e) {
+                ApiResponse<Student> response = new ApiResponse<>(1, "Email already exists", null);
+                return ResponseEntity.ok(response); // Sử dụng mã trạng thái HTTP 409 (Conflict)
+            } catch (Exception e) {
+                ApiResponse<Student> response = new ApiResponse<>(1, "Error occurred: " + e.getMessage(), null);
+                return ResponseEntity.ok(response); // Sử dụng mã trạng thái HTTP 500 (Internal Server Error)
+            }
+
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Student>> deleteStudentById(@PathVariable int id){
+        StudentDetail exits = studentService.getStudentDetailById(id);
         if(exits != null){
-            int idDetailExits = exits.getStudentDetail().getId();
-            exits.setHoDem(student.getHoDem());
-            exits.setTen(student.getTen());
-            exits.setEmail(student.getEmail());
-            exits.setStudentDetail(student.getStudentDetail());
-            studentService.updateStudent(exits);
-            studentService.deleteStudentDetailById(idDetailExits);
-            return ResponseEntity.ok(exits);
+            studentService.deleteStudentById(id);
+            ApiResponse<Student> response = new ApiResponse<>(0, "Delete Student Success", null);
+            return ResponseEntity.ok(response);
         }else{
-            return ResponseEntity.notFound().build();
+            ApiResponse<Student> response = new ApiResponse<>(1, "Student Not Found", null);
+            return ResponseEntity.ok(response);
         }
     }
-//    @DeleteMapping("/student_detail/{id}")
-//    public ResponseEntity<StudentDetail> deleteStudentById(@PathVariable int id){
-//        StudentDetail exits = studentService.getStudentDetailById(id);
-//        if(exits != null){
-//            studentService.deleteStudentById(id);
-//            return ResponseEntity.ok(exits);
-//        }else{
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 }
