@@ -13,7 +13,10 @@ import vn.bt.spring.qlsv_be.entity.StudentDetail;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Service
 public class StudentServiceImpl implements StudentService{
     private StudentDAOImpl studentDAO;
@@ -27,6 +30,18 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public List<Student> getAllStudent() {
         return studentDAO.getAllStudent();
+    }
+
+    @Override
+    public Map<String,Object> getAllStudentWithPagingnate(int page, int limit) {
+        List<Student> students = studentDAO.getAllStudentWithPagingnate(page, limit);
+        long totalRows = studentDAO.getTotalStudentCount();
+        long totalPages = (long) Math.ceil((double) totalRows / limit);
+        Map<String, Object> data = new HashMap<>();
+        data.put("totalRows", totalRows);
+        data.put("totalPages", totalPages);
+        data.put("students", students);
+        return data;
     }
 
     @Override

@@ -15,6 +15,8 @@ public class StudentDAOImpl implements StudentDAO{
     public StudentDAOImpl(EntityManager entityManager){
         this.entityManager = entityManager;
     }
+
+
     @Override
     @Transactional
     public void save(Student student) {
@@ -46,4 +48,21 @@ public class StudentDAOImpl implements StudentDAO{
         String spql = "select s from Student s";
         return entityManager.createQuery("from Student", Student.class).getResultList();
     }
+
+    @Override
+    public List<Student> getAllStudentWithPagingnate(int page, int limit) {
+        String jpql = "select s from Student s";
+        return entityManager.createQuery(jpql,Student.class)
+                .setFirstResult((page-1)*limit)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    @Override
+    public long getTotalStudentCount() {
+        String jpql = "select count(s) from Student s";
+        return entityManager.createQuery(jpql, Long.class).getSingleResult();
+    }
+
+
 }

@@ -6,10 +6,12 @@ import vn.bt.spring.qlsv_be.entity.StudentDetail;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface StudentService {
     public List<Student> getAllStudent();
     public Student getStudentById(int id);
+    public Map<String,Object> getAllStudentWithPagingnate(int page, int limit);
     public void addStudent(Student student, MultipartFile file) throws Exception;
     public Student updateStudent(Student student, MultipartFile file) throws Exception;
     public void deleteStudentById(int id);

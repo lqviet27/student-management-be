@@ -13,6 +13,7 @@ import vn.bt.spring.qlsv_be.service.StudentService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -29,6 +30,17 @@ public class StudentController {
         ApiResponse<List<Student>> response = new ApiResponse<>(0, "Get List Students Success", studentService.getAllStudent());
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getAllStudentWithPaginate(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit) {
+
+        Map<String, Object> students = studentService.getAllStudentWithPagingnate(page, limit);
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(0, "Get List Students Success", students);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Student>> getStudentById(@PathVariable  int id){
         Student student = studentService.getStudentById(id);

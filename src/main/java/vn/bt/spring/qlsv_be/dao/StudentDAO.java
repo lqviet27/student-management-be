@@ -10,5 +10,7 @@ public interface StudentDAO {
     public void update(Student student);
     public void deleteStudentById(int id);
     public List<Student> getAllStudent();
+    public List<Student> getAllStudentWithPagingnate(int page, int limit);
+    long getTotalStudentCount();
 }
 
