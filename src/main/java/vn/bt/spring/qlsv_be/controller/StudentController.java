@@ -34,8 +34,8 @@ public class StudentController {
     @GetMapping("")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getAllStudentWithPaginate(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int limit) {
-
+            @RequestParam(defaultValue = "5") int limit
+    ) {
         Map<String, Object> students = studentService.getAllStudentWithPagingnate(page, limit);
         ApiResponse<Map<String, Object>> response = new ApiResponse<>(0, "Get List Students Success", students);
         return ResponseEntity.ok(response);

@@ -21,7 +21,7 @@ public class User implements UserDetails  {
     private String useName;
     @Column(name = "password", length = 256)
     private String password;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
