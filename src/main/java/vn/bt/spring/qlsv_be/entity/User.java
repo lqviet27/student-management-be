@@ -23,7 +23,7 @@ public class User implements UserDetails  {
     private String password;
     @Column(name = "active")
     private boolean active ;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

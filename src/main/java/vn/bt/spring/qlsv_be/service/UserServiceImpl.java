@@ -2,6 +2,7 @@ package vn.bt.spring.qlsv_be.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,10 +26,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserDAOImpl userDAO;
     private final RoleDAOImpl roleDAO;
+    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserServiceImpl(UserDAOImpl userDAO, RoleDAOImpl roleDAO) {
+    public UserServiceImpl(UserDAOImpl userDAO, RoleDAOImpl roleDAO, @Lazy  PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -137,6 +140,21 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(int id) {
         userDAO.deleteUser(id);
+    }
+
+    @Override
+    public ApiResponse<?> changePassword(int id, ChangePassRequest changePassRequest) {
+        User user = userDAO.getUser(id);
+        if(user == null){
+            return new ApiResponse<>(1, "User not found", null);
+        }
+        if(passwordEncoder.matches(changePassRequest.getOldPassword(), user.getPassword())){
+            user.setPassword(passwordEncoder.encode(changePassRequest.getNewPassword()));
+            userDAO.updateUser(user);
+            return new ApiResponse<>(0, "Change password successfully", null);
+        }else{
+            return new ApiResponse<>(1, "Old password is incorrect", null);
+        }
     }
 
 

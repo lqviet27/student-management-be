@@ -4,6 +4,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -39,6 +40,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/student/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/user/logout/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/user/change-password/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/user/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/student/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/api/student/**").hasAnyRole("ADMIN")

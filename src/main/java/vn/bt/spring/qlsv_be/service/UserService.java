@@ -20,4 +20,5 @@ public interface UserService {
     public User addUser(UserRequest userRequest);
     public User updateUser(UserRequest userRequest);
     public void deleteUser(int id);
+    public ApiResponse<?> changePassword(int id, ChangePassRequest changePassRequest);
 }

@@ -106,6 +106,15 @@ public class UserController {
         }
     }
 
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<ApiResponse<?>> changePassword(@PathVariable int id, @ModelAttribute ChangePassRequest changePassRequest){
+        try{
+            ApiResponse<?> response = userService.changePassword(id, changePassRequest);
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            return ResponseEntity.ok(new ApiResponse<>(1, "Change password failed, " + e.getMessage(), null));
+        }
+    }
 
 
 }
