@@ -11,6 +11,6 @@ public interface StudentDAO {
     public void deleteStudentById(int id);
     public List<Student> getAllStudent();
     public List<Student> getAllStudentWithPagingnate(int page, int limit);
-    long getTotalStudentCount();
+    public long getTotalStudentCount();
 }
 

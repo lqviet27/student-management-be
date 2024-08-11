@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import vn.bt.spring.qlsv_be.entity.User;
 
@@ -12,17 +13,24 @@ import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
+    private final PasswordEncoder passwordEncoder;
     private EntityManager entityManager;
     @Autowired
-    public UserDAOImpl(EntityManager entityManager){
+    public UserDAOImpl(EntityManager entityManager, PasswordEncoder passwordEncoder){
         this.entityManager = entityManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     @Transactional
     public void addUser(User user) {
-        entityManager.persist(user);
+        User user1 = new User();
+        user1.setUseName(user.getUseName());
+        user1.setPassword(passwordEncoder.encode(user.getPassword()));
+        user1.setRole(user.getRole());
+        user1.setActive(user.isActive());
+        entityManager.persist(user1);
     }
 
     @Override
@@ -47,6 +55,21 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> getAllUser() {
         return entityManager.createQuery("from User", User.class).getResultList();
+    }
+
+    @Override
+    public List<User> getAllUserWithPagingnate(int page, int limit) {
+        String jpql = "select s from User s";
+        return entityManager.createQuery(jpql, User.class)
+                .setFirstResult((page-1)*limit)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    @Override
+    public long getTotalUserCount() {
+        String jpql = "select count(s) from User s";
+        return entityManager.createQuery(jpql, Long.class).getSingleResult();
     }
 
     @Override
