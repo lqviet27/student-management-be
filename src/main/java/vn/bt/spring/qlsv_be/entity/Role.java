@@ -13,7 +13,7 @@ public class Role {
     private int id;
     @Column(name = "name", length = 256, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     private Set<User> users;
 
     public Role() {

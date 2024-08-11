@@ -4,12 +4,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import vn.bt.spring.qlsv_be.entity.Student;
 import vn.bt.spring.qlsv_be.entity.User;
 import vn.bt.spring.qlsv_be.request.ChangePassRequest;
+import vn.bt.spring.qlsv_be.request.UserRequest;
 import vn.bt.spring.qlsv_be.response.ApiResponse;
+import vn.bt.spring.qlsv_be.response.UserResponse;
 import vn.bt.spring.qlsv_be.service.UserService;
 
 import java.util.List;
@@ -20,13 +21,15 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/logout/{username}")
-    @Transactional
     public ResponseEntity<ApiResponse<?>> logout(@PathVariable String username) {
         try{
             ApiResponse<?> response =  userService.logout(username);
@@ -37,9 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<User>>> getAllUser() {
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUser() {
         try{
-            ApiResponse<List<User>> response = new ApiResponse<>(0, "Get all user success", userService.getAllUser());
+            ApiResponse<List<UserResponse>> response = new ApiResponse<>(0, "Get all user success", userService.getAllUser());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.ok(new ApiResponse<>(1, "Get all user failed, " + e.getMessage(), null));
@@ -57,45 +60,42 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable  int id){
-        User user = userService.getUserById(id);
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable  int id){
+        UserResponse user = userService.getUserById(id);
         if(user != null){
-            ApiResponse<User> response = new ApiResponse<>(0, "Get USer have id: "+ id +" Success", user);
+            ApiResponse<UserResponse> response = new ApiResponse<>(0, "Get User have id: "+ id +" Success", user);
             return ResponseEntity.ok(response);
         }else{
-            ApiResponse<User> response = new ApiResponse<>(1, "No data", null);
+            ApiResponse<UserResponse> response = new ApiResponse<>(1, "No data", null);
             return ResponseEntity.ok(response);
         }
     }
 
 
     @PostMapping("")
-    @Transactional
-    public ResponseEntity<ApiResponse<User>> addUser(@ModelAttribute  User user )  {
-        user.setId(0);
+    public ResponseEntity<ApiResponse<UserResponse>> addUser(@ModelAttribute UserRequest userRequest )  {
         try {
-            userService.addUser(user);
-            ApiResponse<User> response = new ApiResponse<>(0, "Create User Success", user);
+            userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            User user = userService.addUser(userRequest);
+            ApiResponse<UserResponse> response = new ApiResponse<>(0, "Create User Success", new UserResponse(user.getId(), user.getUseName(), user.getPassword(), user.isActive(), user.getRole().getName()));
             return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
-            ApiResponse<User> response = new ApiResponse<>(1, "User Name already exists", null);
+            ApiResponse<UserResponse> response = new ApiResponse<>(1, "User Name already exists", null);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            ApiResponse<User> response = new ApiResponse<>(1, "Error occurred: " + e.getMessage(), null);
+            ApiResponse<UserResponse> response = new ApiResponse<>(1, "Error occurred: " + e.getMessage(), null);
             return ResponseEntity.ok(response);
         }
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable int id, @ModelAttribute  User user){
-            userService.updateUser(user);
-            ApiResponse<User> response = new ApiResponse<>(0, "Update User Success", user);
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable int id, @ModelAttribute  UserRequest userRequest){
+            User user = userService.updateUser(userRequest);
+            ApiResponse<UserResponse> response = new ApiResponse<>(0, "Update User Success", new UserResponse(user.getId(), user.getUseName(), user.getPassword(), user.isActive(), user.getRole().getName()));
             return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity<ApiResponse<User>> deleteUser(@PathVariable int id){
         try{
             userService.deleteUser(id);
@@ -106,10 +106,6 @@ public class UserController {
         }
     }
 
-    @PutMapping("/change-password")
-    @Transactional
-    public ResponseEntity<ApiResponse<?>> changePassword(@RequestParam String username, @ModelAttribute ChangePassRequest changePassRequest){
-            return ResponseEntity.ok(userService.changePassword(username, changePassRequest));
-    }
+
 
 }

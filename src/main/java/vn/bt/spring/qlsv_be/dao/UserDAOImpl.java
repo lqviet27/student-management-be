@@ -3,34 +3,28 @@ package vn.bt.spring.qlsv_be.dao;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import jakarta.transaction.Transactional;
 import vn.bt.spring.qlsv_be.entity.User;
 
 import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
-    private final PasswordEncoder passwordEncoder;
     private EntityManager entityManager;
     @Autowired
-    public UserDAOImpl(EntityManager entityManager, PasswordEncoder passwordEncoder){
+    public UserDAOImpl(EntityManager entityManager){
         this.entityManager = entityManager;
-        this.passwordEncoder = passwordEncoder;
+//        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     @Transactional
     public void addUser(User user) {
-        User user1 = new User();
-        user1.setUseName(user.getUseName());
-        user1.setPassword(passwordEncoder.encode(user.getPassword()));
-        user1.setRole(user.getRole());
-        user1.setActive(user.isActive());
-        entityManager.persist(user1);
+        entityManager.persist(user);
     }
 
     @Override
@@ -43,7 +37,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void deleteUser(int id) {
-        User user = entityManager.find(User.class, id);
+        User user = getUser(id);
         entityManager.remove(user);
     }
 

@@ -37,11 +37,15 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/user/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/student/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/user/logout/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/user/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/student/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/api/student/**").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/student/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/user/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/user/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/user/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 ).exceptionHandling(exceptionHandling ->
                         exceptionHandling.accessDeniedHandler(customAccessDeniedHandler)
