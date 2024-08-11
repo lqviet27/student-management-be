@@ -40,6 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         user.setUseName(request.getUserName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(roleDAO.getRoleByName("ROLE_USER"));
+        user.setActive(false);
         try{
             userDAO.addUser(user);
             String jwt = jwtService.generateToken(user);
@@ -62,7 +63,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
             );
 
             User user = userDAO.findUserByUsername(request.getUserName());
-
+            user.setActive(true);
+            userDAO.updateUser(user);
             String jwt = jwtService.generateToken(user);
             Map<String, String> response = new HashMap<>();
             response.put("token", jwt);

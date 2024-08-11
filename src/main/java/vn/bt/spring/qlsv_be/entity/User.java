@@ -21,6 +21,8 @@ public class User implements UserDetails  {
     private String useName;
     @Column(name = "password", length = 256)
     private String password;
+    @Column(name = "active")
+    private boolean active ;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
@@ -28,10 +30,11 @@ public class User implements UserDetails  {
     public User() {
     }
 
-    public User(String useName, String password, Role role) {
+    public User(String useName, String password, Role role, boolean active) {
         this.useName = useName;
         this.password = password;
         this.role = role;
+        this.active = active;
     }
 
     public int getId() {
@@ -64,6 +67,14 @@ public class User implements UserDetails  {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     //user details
